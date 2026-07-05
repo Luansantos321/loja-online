@@ -1,0 +1,33 @@
+# Ambiente virtual
+Luan/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Banco de dados
+db.sqlite3
+
+# Arquivos de ambiente
+.env
+
+# Arquivos do VS Code
+.vscode/
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# Arquivos de mídia
+media/
+
+# Logs
+*.log
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
