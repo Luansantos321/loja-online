@@ -37,13 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
-    'contas',
-    'produtos',
-    'categorias',
-    'carrinhos',
-    'pedidos',
-    'pagamentos',
+    #apps do projeto
+    'apps.core',
+    'apps.contas',
+    'apps.produtos',
+    'apps.categorias',
+    'apps.carrinhos',
+    'apps.pedidos',
+    'apps.pagamentos',
 ]
 
 MIDDLEWARE = [
@@ -80,12 +81,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "loja_online",
+        "USER": "postgres",
+        "PASSWORD": "Luan1234.",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
+
+AUTH_USER_MODEL = "contas.Usuario"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -111,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'America\Bahia'
+TIME_ZONE = 'America/Bahia'
 
 USE_I18N = True
 
@@ -131,3 +138,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
