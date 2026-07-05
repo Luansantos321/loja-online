@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ produto.nome }}</title>
+</head>
+<body>
+
+<h1>{{ produto.nome }}</h1>
+
+<p>{{ produto.descricao }}</p>
+
+<p>Categoria: {{ produto.categoria.nome }}</p>
+
+<hr>
+
+<h3>Variações</h3>
+
+{% for v in variacoes %}
+    <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+        <p>SKU: {{ v.sku }}</p>
+        <p>Preço: R$ {{ v.preco }}</p>
+        <p>Estoque: {{ v.estoque }}</p>
+        <button>Comprar essa variação</button>
+    </div>
+{% endfor %}
+
+<button>Adicionar ao carrinho</button>
+
+</body>
+</html>

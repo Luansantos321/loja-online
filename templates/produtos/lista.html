@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Produtos</title>
+</head>
+<body>
+
+<h1>Produtos da Loja</h1>
+
+{% for produto in produtos %}
+    <div>
+        <a href="{% url 'detalhe_produto' produto.slug %}">
+            <h3>{{ produto.nome }}</h3>
+        </a>
+        <p>{{ produto.descricao }}</p>
+        <p>Categoria: {{ produto.categoria.nome }}</p>
+    </div>
+{% empty %}
+    <p>Nenhum produto encontrado</p>
+{% endfor %}
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .produto import Produto
+from ..models import Produto
 
 
 class Avaliacao(models.Model):

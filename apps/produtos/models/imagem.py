@@ -1,5 +1,5 @@
 from django.db import models
-from .produto import Produto
+from ..models import Produto
 
 
 class ImagemProduto(models.Model):

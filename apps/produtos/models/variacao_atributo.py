@@ -1,7 +1,7 @@
 from django.db import models
 
 from .variacao import VariacaoProduto
-from .valor_atributo import ValorAtributo
+from ..models import ValorAtributo
 
 
 class VariacaoAtributo(models.Model):
