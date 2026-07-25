@@ -1,0 +1,21 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">⚠️ Exclusão definitiva</h4>
+        <p>Você está prestes a excluir permanentemente o produto <strong>{{ produto.nome }}</strong>.</p>
+        <p class="mb-0">
+            Isso vai apagar também <strong>todas as variações</strong> desse produto e
+            <strong>todo o histórico de movimentações de estoque</strong> relacionado a elas
+            (entradas, vendas, ajustes). Essa ação não pode ser desfeita.
+        </p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sim, excluir definitivamente</button>
+        <a href="{% url 'painel_produto_detalhe' produto.pk %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

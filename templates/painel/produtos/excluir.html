@@ -1,0 +1,55 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-5">
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <h3>
+
+                Excluir Produto
+
+            </h3>
+
+            <p>
+
+                Tem certeza que deseja excluir
+
+                <strong>
+
+                    {{ produto.nome }}
+
+                </strong>
+
+                ?
+
+            </p>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <button class="btn btn-danger">
+
+                    Sim, excluir
+
+                </button>
+
+                <a href="{% url 'painel_produtos' %}" class="btn btn-secondary">
+
+                    Cancelar
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

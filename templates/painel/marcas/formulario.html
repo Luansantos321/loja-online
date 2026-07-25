@@ -1,0 +1,136 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-4">
+
+    {% if marcas %}
+        <h2>Editar Marca</h2>
+    {% else %}
+        <h2>Nova Marca</h2>
+    {% endif %}
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Nome da Marca
+
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="nome"
+                        value="{{ marca.nome|default:'' }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Descrição
+
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        rows="5"
+                        name="descricao"
+                    >{{ marcas.descricao|default:'' }}</textarea>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Logo
+
+                    </label>
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="logo"
+                        accept="image/*"
+                    >
+
+                </div>
+
+                {% if marcas.logo %}
+
+                <div class="mb-3">
+
+                    <img
+                        src="{{ marca.logo.url }}"
+                        width="150"
+                        class="img-thumbnail"
+                    >
+
+                </div>
+
+                {% endif %}
+
+                <div class="form-check mb-4">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="ativa"
+                        id="ativa"
+                        {% if marca.ativa %}checked{% endif %}
+                    >
+
+                    <label
+                        class="form-check-label"
+                        for="ativa"
+                    >
+
+                        Marca Ativa
+
+                    </label>
+
+                </div>
+
+                <div class="d-flex justify-content-end">
+
+                    <a
+                        href="{% url 'painel_marcas' %}"
+                        class="btn btn-secondary me-2"
+                    >
+
+                        Cancelar
+
+                    </a>
+
+                    <button
+                        class="btn btn-success"
+                    >
+
+                        Salvar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <h2>Marcas</h2>
+
+        <a href="{% url 'painel_marca_nova' %}" class="btn btn-primary">
+            Nova Marca
+        </a>
+
+    </div>
+
+    <form method="get" class="mb-3">
+
+        <input
+            type="text"
+            class="form-control"
+            name="q"
+            value="{{ busca }}"
+            placeholder="Pesquisar marca..."
+        >
+
+    </form>
+
+    <table class="table table-hover">
+
+        <thead>
+
+            <tr>
+
+                <th>Logo</th>
+                <th>Nome</th>
+                <th>Status</th>
+                <th></th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for marca in marcas %}
+
+            <tr>
+
+                <td>
+
+                    {% if marca.logo %}
+                        <img src="{{ marca.logo.url }}" width="60">
+                    {% endif %}
+
+                </td>
+
+                <td>{{ marca.nome }}</td>
+
+                <td>
+
+                    {% if marca.ativa %}
+
+                        Ativa
+
+                    {% else %}
+
+                        Inativa
+
+                    {% endif %}
+
+                </td>
+
+                <td class="text-end">
+
+                    <a
+                        href="{% url 'painel_marca_editar' marca.id %}"
+                        class="btn btn-warning btn-sm">
+
+                        Editar
+
+                    </a>
+
+                    <a
+                        href="{% url 'painel_marca_excluir' marca.id %}"
+                        class="btn btn-danger btn-sm">
+
+                        Excluir
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="4">
+
+                    Nenhuma marca cadastrada.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

@@ -1,30 +1,138 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ produto.nome }}</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>{{ produto.nome }}</h1>
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <img id="imagem-principal"
+                 src="{% if variacoes.first %}{{ variacoes.first.imagem_exibicao }}{% elif imagens.first %}{{ imagens.first.imagem.url }}{% endif %}"
+                 width="100%"
+                 style="max-width: 450px;"
+                 alt="{{ produto.nome }}">
+        </div>
 
-<p>{{ produto.descricao }}</p>
+        <div class="col-md-6">
+            <h1>{{ produto.nome }}</h1>
+            <p class="text-muted">Categoria: {{ produto.categoria.nome }}</p>
+            <p>{{ produto.descricao }}</p>
 
-<p>Categoria: {{ produto.categoria.nome }}</p>
+            <h4 id="preco-selecionado">
+                {% if variacoes.first %}R$ {{ variacoes.first.preco|floatformat:2 }}{% endif %}
+            </h4>
+
+            <hr>
+            <h5>Escolha uma variação</h5>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                {% for variacao in variacoes %}
+                <div class="variacao-opcao text-center {% if forloop.first %}variacao-selecionada{% endif %}"
+                     data-variacao-id="{{ variacao.pk }}"
+                     data-preco="{{ variacao.preco }}"
+                     data-imagem="{{ variacao.imagem_exibicao }}"
+                     data-estoque="{{ variacao.quantidade }}"
+                     style="cursor: pointer; border: 2px solid {% if forloop.first %}#0d6efd{% else %}#ddd{% endif %}; border-radius: 8px; padding: 4px;">
+                    {% if variacao.imagem_exibicao %}
+                        <img src="{{ variacao.imagem_exibicao }}" width="60" height="60" style="object-fit: cover; border-radius: 4px;">
+                    {% endif %}
+                    <div style="font-size: 12px;">
+                        {{ variacao.tamanho|default:"" }} {{ variacao.cor|default:"" }}
+                    </div>
+                </div>
+                {% empty %}
+                <p>Nenhuma variação disponível.</p>
+                {% endfor %}
+            </div>
+
+            <p id="estoque-info">
+                {% if variacoes.first %}
+                    {% if variacoes.first.quantidade > 0 %}
+                        Em estoque: <span id="qtd-disponivel">{{ variacoes.first.quantidade }}</span>
+                    {% else %}
+                        <span class="text-danger">Esgotado</span>
+                    {% endif %}
+                {% endif %}
+            </p>
+
+            <form method="POST" id="form-carrinho" action="">
+                {% csrf_token %}
+                <input type="hidden" name="quantidade" id="input-quantidade-carrinho" value="1">
+                <input type="number" name="quantidade_visivel" id="input-quantidade" value="1" min="1"
+                       max="{% if variacoes.first %}{{ variacoes.first.quantidade }}{% endif %}"
+                       style="width: 70px;">
+                <button type="submit" class="btn btn-primary">Adicionar ao carrinho</button>
+            </form>
+
+            <form method="POST" id="form-comprar" action="" class="mt-2">
+                {% csrf_token %}
+                <input type="hidden" name="quantidade" value="1">
+                <button type="submit" class="btn btn-success">Comprar agora</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const opcoes = document.querySelectorAll('.variacao-opcao');
+    const imagemPrincipal = document.getElementById('imagem-principal');
+    const precoSelecionado = document.getElementById('preco-selecionado');
+    const estoqueInfo = document.getElementById('estoque-info');
+    const inputQuantidade = document.getElementById('input-quantidade');
+    const formCarrinho = document.getElementById('form-carrinho');
+    const formComprar = document.getElementById('form-comprar');
+
+    function selecionarVariacao(opcao) {
+        opcoes.forEach(o => o.style.border = '2px solid #ddd');
+        opcao.style.border = '2px solid #0d6efd';
+
+        const preco = opcao.dataset.preco;
+        const imagem = opcao.dataset.imagem;
+        const estoque = parseInt(opcao.dataset.estoque);
+        const variacaoId = opcao.dataset.variacaoId;
+
+        if (imagem) {
+            imagemPrincipal.src = imagem;
+        }
+        precoSelecionado.textContent = 'R$ ' + parseFloat(preco).toFixed(2).replace('.', ',');
+
+        if (estoque > 0) {
+            estoqueInfo.innerHTML = 'Em estoque: ' + estoque;
+            inputQuantidade.max = estoque;
+            inputQuantidade.value = 1;
+        } else {
+            estoqueInfo.innerHTML = '<span class="text-danger">Esgotado</span>';
+        }
+
+        formCarrinho.action = '/produtos/' + variacaoId + '/carrinho/';
+        formComprar.action = '/produtos/' + variacaoId + '/comprar/';
+    }
+
+    opcoes.forEach(function (opcao) {
+        opcao.addEventListener('click', function () {
+            selecionarVariacao(opcao);
+        });
+    });
+
+    // seleciona a primeira variação automaticamente ao carregar a página
+    if (opcoes.length > 0) {
+        formCarrinho.action = '/produtos/' + opcoes[0].dataset.variacaoId + '/carrinho/';
+        formComprar.action = '/produtos/' + opcoes[0].dataset.variacaoId + '/comprar/';
+    }
+
+    document.getElementById('form-carrinho').addEventListener('submit', function () {
+        document.getElementById('input-quantidade-carrinho').value = inputQuantidade.value;
+    });
+});
+</script>
 
 <hr>
+<h2>Galeria</h2>
+<div class="d-flex flex-wrap gap-2">
+    {% for imagem in imagens %}
+        <img src="{{ imagem.imagem.url }}" width="120">
+    {% empty %}
+        <p>Produto sem imagens.</p>
+    {% endfor %}
+</div>
 
-<h3>Variações</h3>
-
-{% for v in variacoes %}
-    <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-        <p>SKU: {{ v.sku }}</p>
-        <p>Preço: R$ {{ v.preco }}</p>
-        <p>Estoque: {{ v.estoque }}</p>
-        <button>Comprar essa variação</button>
-    </div>
-{% endfor %}
-
-<button>Adicionar ao carrinho</button>
-
-</body>
-</html>
+{% endblock %}

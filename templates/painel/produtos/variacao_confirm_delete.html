@@ -1,0 +1,14 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <h2>Excluir Variação</h2>
+    <p>Tem certeza que deseja excluir <strong>{{ variacao }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="btn btn-danger">Sim, excluir</button>
+        <a href="{% url 'painel_produto_detalhe' variacao.produto.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

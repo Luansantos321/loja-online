@@ -1,0 +1,14 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <h2>Excluir Categoria</h2>
+    <p>Tem certeza que deseja excluir a categoria <strong>{{ categoria.nome }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        <a href="{% url 'categoria_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

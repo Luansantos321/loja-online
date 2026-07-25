@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.carrinhos',
     'apps.pedidos',
     'apps.pagamentos',
+    "apps.painel",
 ]
 
 MIDDLEWARE = [
@@ -112,6 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'lista_produtos'
+LOGOUT_REDIRECT_URL = 'lista_produtos'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

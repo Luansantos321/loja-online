@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<div class="bg-dark text-white py-5 mb-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold">Bem-vindo à nossa loja</h1>
+        <p class="lead mb-0">Confira nossos produtos em destaque, lançamentos e mais vendidos</p>
+    </div>
+</div>
+
+<div class="container">
+
+    {% if destaques %}
+    <section class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h2 class="mb-0 me-2">Destaques</h2>
+            <span class="badge bg-primary">Selecionados pra você</span>
+        </div>
+        <div class="row">
+            {% for produto in destaques %}
+                <div class="col-6 col-md-3 mb-4">
+                    {% include 'components/card_produto.html' %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if lancamentos %}
+    <section class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h2 class="mb-0 me-2">Lançamentos</h2>
+            <span class="badge bg-success">Novidades</span>
+        </div>
+        <div class="row">
+            {% for produto in lancamentos %}
+                <div class="col-6 col-md-3 mb-4">
+                    {% include 'components/card_produto.html' %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if mais_vendidos %}
+    <section class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h2 class="mb-0 me-2">Mais Vendidos</h2>
+            <span class="badge bg-warning text-dark">Favoritos da galera</span>
+        </div>
+        <div class="row">
+            {% for produto in mais_vendidos %}
+                <div class="col-6 col-md-3 mb-4">
+                    {% include 'components/card_produto.html' %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if not destaques and not lancamentos and not mais_vendidos %}
+        <div class="text-center py-5">
+            <p class="text-muted fs-5">Nenhum produto cadastrado ainda.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

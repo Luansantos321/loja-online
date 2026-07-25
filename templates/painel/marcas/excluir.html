@@ -1,0 +1,90 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6">
+
+            <div class="card border-danger shadow">
+
+                <div class="card-header bg-danger text-white">
+
+                    Excluir Marca
+
+                </div>
+
+                <div class="card-body">
+
+                    <h5>
+
+                        Tem certeza?
+
+                    </h5>
+
+                    <p>
+
+                        Você está prestes a excluir a marca
+
+                        <strong>
+
+                            {{ marcas.nome }}
+
+                        </strong>
+
+                    </p>
+
+                    {% if marcas.logo %}
+
+                    <div class="text-center mb-4">
+
+                        <img
+                            src="{{ marca.logo.url }}"
+                            width="150"
+                            class="img-thumbnail"
+                        >
+
+                    </div>
+
+                    {% endif %}
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="d-flex justify-content-end">
+
+                            <a
+                                href="{% url 'painel_marcas' %}"
+                                class="btn btn-secondary me-2"
+                            >
+
+                                Cancelar
+
+                            </a>
+
+                            <button
+                                class="btn btn-danger"
+                            >
+
+                                Excluir Marca
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

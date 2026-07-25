@@ -1,0 +1,60 @@
+{% extends 'painel/base.html' %}
+
+{% block titulo %}Estoque{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Estoque</h2>
+    </div>
+
+    <form method="get" class="mb-3">
+        <input
+            type="text"
+            name="busca"
+            class="form-control"
+            placeholder="Buscar por nome do produto..."
+            value="{{ request.GET.busca|default:'' }}"
+        >
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Tamanho</th>
+                <th>Cor</th>
+                <th>SKU</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Situação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for variacao in variacoes %}
+            <tr>
+                <td>{{ variacao.produto.nome }}</td>
+                <td>{{ variacao.tamanho|default:"—" }}</td>
+                <td>{{ variacao.cor|default:"—" }}</td>
+                <td>{{ variacao.sku|default:"—" }}</td>
+                <td>R$ {{ variacao.preco|floatformat:2 }}</td>
+                <td>{{ variacao.quantidade }}</td>
+                <td>
+                    {% if variacao.quantidade == 0 %}
+                        <span class="badge bg-danger">Sem estoque</span>
+                    {% elif variacao.quantidade <= 5 %}
+                        <span class="badge bg-warning text-dark">Estoque baixo</span>
+                    {% else %}
+                        <span class="badge bg-success">Disponível</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Nenhuma variação cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

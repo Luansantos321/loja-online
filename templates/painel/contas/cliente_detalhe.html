@@ -1,0 +1,87 @@
+{% extends 'painel/base.html' %}
+
+{% block titulo %}{{ cliente.get_full_name }}{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <img src="{{ cliente.foto.url }}" width="80" height="80" class="rounded-circle me-3">
+        <div>
+            <h2 class="mb-0">{{ cliente.get_full_name|default:cliente.username }}</h2>
+            <span class="text-muted">Cliente desde {{ cliente.criado_em|date:"d/m/Y" }}</span>
+        </div>
+    </div>
+
+    <table class="table table-borderless">
+        <tr>
+            <th style="width: 200px;">Usuário</th>
+            <td>{{ cliente.username }}</td>
+        </tr>
+        <tr>
+            <th>E-mail</th>
+            <td>{{ cliente.email|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th>Telefone</th>
+            <td>{{ cliente.telefone|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th>CPF</th>
+            <td>{{ cliente.cpf|default:"—" }}</td>
+        </tr>
+        <tr>
+            <th>Ativo</th>
+            <td>
+                {% if cliente.is_active %}
+                    <span class="badge bg-success">Sim</span>
+                {% else %}
+                    <span class="badge bg-danger">Não</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Última atualização</th>
+            <td>{{ cliente.atualizado_em|date:"d/m/Y H:i" }}</td>
+        </tr>
+    </table>
+    <hr>
+<h4 class="mb-3">Histórico de Compras</h4>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Pedido</th>
+            <th>Data</th>
+            <th>Itens</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in compras %}
+        <tr>
+            <td>#{{ pedido.pk }}</td>
+            <td>{{ pedido.criado_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ pedido.itens.count }}</td>
+            <td>R$ {{ pedido.total|floatformat:2 }}</td>
+            <td>
+                <span class="badge bg-{% if pedido.status == 'FINALIZADO' %}success{% elif pedido.status == 'CANCELADO' %}danger{% else %}warning{% endif %}">
+                    {{ pedido.get_status_display }}
+                </span>
+            </td>
+            <td class="text-end">
+                <a href="{% url 'pedido_confirmado' pedido.pk %}" class="btn btn-sm btn-outline-secondary">Ver detalhes</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">Nenhuma compra registrada ainda.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    <a href="{% url 'cliente_list' %}" class="btn btn-secondary">Voltar para clientes</a>
+</div>
+{% endblock %}

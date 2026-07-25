@@ -9,7 +9,7 @@
 
 {% for produto in produtos %}
     <div>
-        <a href="{% url 'detalhe_produto' produto.slug %}">
+        <a href="{% url 'detalhe_produto_cliente' produto.slug %}">
             <h3>{{ produto.nome }}</h3>
         </a>
         <p>{{ produto.descricao }}</p>

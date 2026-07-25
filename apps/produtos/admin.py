@@ -23,6 +23,8 @@ class VariacaoProdutoInline(admin.TabularInline):
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ("nome", "categoria", "ativo")
+    list_filter = ("nome", "categoria", "ativo")
+    search_fields = ("nome", "slug")
     inlines = [ImagemProdutoInline, VariacaoProdutoInline]
 
 
@@ -47,7 +49,7 @@ class ValorAtributoAdmin(admin.ModelAdmin):
 # VARIAÇÕES
 @admin.register(VariacaoProduto)
 class VariacaoProdutoAdmin(admin.ModelAdmin):
-    list_display = ("produto", "sku", "preco", "estoque")
+    list_display = ("produto", "sku", "preco", "quantidade")
 
 
 # AVALIAÇÕES

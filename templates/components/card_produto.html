@@ -1,0 +1,43 @@
+<div class="card h-100 shadow-sm border-0 produto-card">
+    <div style="position: relative;">
+        {% if produto.imagens.first %}
+            <img src="{{ produto.imagens.first.imagem.url }}" class="card-img-top" style="height: 220px; object-fit: cover;" alt="{{ produto.nome }}">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                <span class="text-muted">Sem imagem</span>
+            </div>
+        {% endif %}
+
+        {% if produto.lancamento %}
+            <span class="badge bg-success position-absolute top-0 start-0 m-2">Novo</span>
+        {% endif %}
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <h6 class="card-title mb-1">
+            <a href="{% url 'detalhe_produto_cliente' produto.slug %}" class="text-decoration-none text-dark stretched-link">
+                {{ produto.nome }}
+            </a>
+        </h6>
+
+        <p class="card-text text-muted small flex-grow-1">
+            {{ produto.descricao|truncatewords:10 }}
+        </p>
+
+        {% if produto.preco_minimo %}
+            <p class="fw-bold mb-2">A partir de R$ {{ produto.preco_minimo|floatformat:2 }}</p>
+        {% else %}
+            <p class="text-muted mb-2 small">Preço indisponível</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.produto-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.produto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+}
+</style>

@@ -1,0 +1,135 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-4">
+
+    <h2>{{ produto.nome }}</h2>
+
+    <hr>
+
+    <p>
+
+        <strong>Categoria:</strong>
+
+        {{ produto.categoria.nome }}
+
+    </p>
+
+    <p>
+
+        <strong>Descrição:</strong>
+
+        {{ produto.descricao }}
+
+    </p>
+
+    <p>
+
+        <strong>Slug:</strong>
+
+        {{ produto.slug }}
+
+    </p>
+
+    <p>
+
+        <strong>Ativo:</strong>
+
+        {{ produto.ativo }}
+
+    </p>
+
+    <p>
+
+        <strong>Destaque:</strong>
+
+        {{ produto.destaque }}
+
+    </p>
+
+    <p>
+
+        <strong>Lançamento:</strong>
+
+        {{ produto.lancamento }}
+
+    </p>
+
+    <p>
+
+        <strong>Mais Vendido:</strong>
+
+        {{ produto.mais_vendido }}
+
+    </p>
+
+    <a href="{% url 'painel_produto_editar' produto.id %}" class="btn btn-warning">
+
+        Editar
+
+    </a>
+
+    <a href="{% url 'painel_produto_excluir' produto.id %}" class="btn btn-danger">
+
+        Excluir
+
+    </a>
+
+</div>
+<hr>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Variações</h4>
+    <a href="{% url 'variacao_create' produto.id %}" class="btn btn-primary btn-sm">
+        + Adicionar Variação
+    </a>
+</div>
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Tamanho</th>
+            <th>Cor</th>
+            <th>SKU</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th class="text-end">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for variacao in variacoes %}
+        <tr>
+            <td>{{ variacao.tamanho|default:"—" }}</td>
+            <td>{{ variacao.cor|default:"—" }}</td>
+            <td>{{ variacao.sku|default:"—" }}</td>
+            <td>R$ {{ variacao.preco|floatformat:2 }}</td>
+            <td>{{ variacao.quantidade }}</td>
+            <td class="text-end">
+                <a href="{% url 'variacao_delete' variacao.pk %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Nenhuma variação cadastrada ainda.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    {% for variacao in variacoes %}
+    <div class="mb-2">
+    <span>{{ variacao.tamanho }} - {{ variacao.cor }} - R$ {{ variacao.preco|floatformat:2 }}</span>
+
+    {% if variacao.quantidade > 0 %}
+    <form method="POST" action="{% url 'adicionar_ao_carrinho' variacao.pk %}" class="d-inline">
+        {% csrf_token %}
+        <input type="number" name="quantidade" value="1" min="1" max="{{ variacao.quantidade }}" style="width: 60px;">
+        <button type="submit" class="btn btn-sm btn-primary">Adicionar ao carrinho</button>
+    </form>
+    {% else %}
+    <span class="badge bg-secondary">Esgotado</span>
+    {% endif %}
+</div>
+{% endfor %}
+</table>
+
+{% endblock %}

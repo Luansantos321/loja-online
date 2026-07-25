@@ -1,0 +1,225 @@
+{% extends 'painel/base.html' %}
+
+{% block conteudo %}
+
+<div class="container mt-4">
+
+    {% if produto %}
+        <h2>Editar Produto</h2>
+    {% else %}
+        <h2>Novo Produto</h2>
+    {% endif %}
+
+    <form method="POST"enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Nome
+
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                name="nome"
+                value="{{ produto.nome|default:'' }}"
+                required
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Categoria
+
+            </label>
+
+            <select class="form-select" name="categoria">
+
+                {% for categoria in categorias %}
+
+                <option
+                    value="{{ categoria.id }}"
+                    {% if produto.categoria.id == categoria.id %}
+                        selected
+                    {% endif %}
+                >
+
+                    {{ categoria.nome }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            </div>
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        imagem
+
+                    </label>
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="imagem"
+                        accept="image/*"
+                    >
+
+                </div>
+
+                {% if produto.imagem %}
+
+                <div class="mb-3">
+
+                    <img
+                        src="{{ produto.imagem.url }}"
+                        width="150"
+                        class="img-thumbnail"
+                    >
+
+                </div>
+
+                {% endif %}
+        <div class="mb-3">
+
+            <label class="form-label">
+
+                Marca
+
+            </label>
+
+            <select class="form-select" name="marca">
+
+                {% for marca in marcas %}
+
+                <option
+                    value="{{ marca.id }}"
+                    {% if produto.marca.id == marca.id %}
+                        selected
+                    {% endif %}
+                >
+
+                    {{ marca.nome }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>
+
+                Descrição
+
+            </label>
+
+            <textarea
+                class="form-control"
+                rows="6"
+                name="descricao"
+            >{{ produto.descricao|default:'' }}</textarea>
+
+        </div>
+
+        <div class="form-check">
+
+            <input
+                class="form-check-input"
+                type="checkbox"
+                name="ativo"
+                {% if produto.ativo %}checked{% endif %}
+            >
+
+            <label>
+
+                Ativo
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input
+                class="form-check-input"
+                type="checkbox"
+                name="destaque"
+                {% if produto.destaque %}checked{% endif %}
+            >
+
+            <label>
+
+                Destaque
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input
+                class="form-check-input"
+                type="checkbox"
+                name="lancamento"
+                {% if produto.lancamento %}checked{% endif %}
+            >
+
+            <label>
+
+                Lançamento
+
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input
+                class="form-check-input"
+                type="checkbox"
+                name="mais_vendido"
+                {% if produto.mais_vendido %}checked{% endif %}
+            >
+
+            <label>
+
+                Mais Vendido
+
+            </label>
+
+        </div>
+
+        <br>
+
+        <button class="btn btn-success">
+
+            Salvar
+
+        </button>
+
+        <a href="{% url 'painel_produtos' %}" class="btn btn-secondary">
+
+            Cancelar
+
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
