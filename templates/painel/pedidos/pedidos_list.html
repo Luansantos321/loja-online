@@ -27,6 +27,7 @@
                 <th>#</th>
                 <th>Data</th>
                 <th>Atendente</th>
+                <th>Cliente</th>
                 <th>Itens</th>
                 <th>Total</th>
                 <th>Status</th>
@@ -39,6 +40,7 @@
                 <td>{{ pedido.pk }}</td>
                 <td>{{ pedido.criado_em|date:"d/m/Y H:i" }}</td>
                 <td>{{ pedido.atendente|default:"—" }}</td>
+                <td>{{ pedido.cliente.get_full_name|default:pedido.cliente.username|default:"—" }}</td>
                 <td>{{ pedido.itens.count }}</td>
                 <td>R$ {{ pedido.total|floatformat:2 }}</td>
                 <td>

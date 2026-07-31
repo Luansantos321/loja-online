@@ -138,6 +138,42 @@ def estoque_list(request):
         'variacoes': variacoes,
     })
 
+from apps.contas.models import Endereco
+
+
+def _criar_pedido_a_partir_do_carrinho(request, carrinho, endereco_dados):
+    with transaction.atomic():
+        pedido = Pedido.objects.create(
+            cliente=request.user,
+            atendente=None,
+            status=Pedido.FINALIZADO,
+            endereco_cep=endereco_dados['cep'],
+            endereco_rua=endereco_dados['rua'],
+            endereco_numero=endereco_dados['numero'],
+            endereco_complemento=endereco_dados.get('complemento', ''),
+            endereco_bairro=endereco_dados['bairro'],
+            endereco_cidade=endereco_dados['cidade'],
+            endereco_estado=endereco_dados['estado'],
+        )
+
+        for item in carrinho:
+            ItemPedido.objects.create(
+                pedido=pedido,
+                variacao=item['variacao'],
+                quantidade=item['quantidade'],
+                preco_unitario=item['preco'],
+            )
+            registrar_saida(
+                variacao_id=item['variacao'].pk,
+                quantidade=item['quantidade'],
+                motivo=f'Venda site - Pedido #{pedido.pk}',
+                usuario=request.user,
+            )
+
+    carrinho.limpar()
+    return pedido
+
+
 @login_required
 def adicionar_ao_carrinho(request, variacao_id):
     carrinho = Carrinho(request)
@@ -154,45 +190,82 @@ def ver_carrinho_cliente(request):
 
 
 @login_required
+def comprar_agora(request, variacao_id):
+    if request.method != 'POST':
+        variacao = get_object_or_404(VariacaoProduto, pk=variacao_id)
+        return redirect('detalhe_produto_cliente', slug=variacao.produto.slug)
+
+    quantidade = int(request.POST.get('quantidade', 1))
+    carrinho = Carrinho(request)
+    carrinho.adicionar(variacao_id, quantidade)
+    return redirect('checkout_endereco')
+
+
+@login_required
 def finalizar_compra_cliente(request):
+    if request.method != 'POST':
+        return redirect('ver_carrinho_cliente')
+
     carrinho = Carrinho(request)
 
     if len(carrinho) == 0:
         messages.error(request, 'Seu carrinho está vazio.')
         return redirect('ver_carrinho_cliente')
 
-    try:
-        with transaction.atomic():
-            pedido = Pedido.objects.create(
-                cliente=request.user,
-                atendente=None,
-                status=Pedido.FINALIZADO,
-            )
+    return redirect('checkout_endereco')
 
-            for item in carrinho:
-                ItemPedido.objects.create(
-                    pedido=pedido,
-                    variacao=item['variacao'],
-                    quantidade=item['quantidade'],
-                    preco_unitario=item['preco'],
-                )
-                registrar_saida(
-                    variacao_id=item['variacao'].pk,
-                    quantidade=item['quantidade'],
-                    motivo=f'Venda site - Pedido #{pedido.pk}',
-                    usuario=request.user,
-                )
 
-        carrinho.limpar()
-        messages.success(request, f'Compra finalizada! Pedido #{pedido.pk}.')
-        return redirect('meu_pedido_detalhe', pk=pedido.pk)
+@login_required
+def checkout_endereco(request):
+    carrinho = Carrinho(request)
 
-    except ValidationError as e:
-        messages.error(request, str(e))
+    if len(carrinho) == 0:
+        messages.error(request, 'Seu carrinho está vazio.')
         return redirect('ver_carrinho_cliente')
+
+    endereco_salvo = Endereco.objects.filter(usuario=request.user).first()
+
+    if request.method == 'POST':
+        cep = request.POST.get('cep', '').strip()
+        rua = request.POST.get('rua', '').strip()
+        numero = request.POST.get('numero', '').strip()
+        complemento = request.POST.get('complemento', '').strip()
+        bairro = request.POST.get('bairro', '').strip()
+        cidade = request.POST.get('cidade', '').strip()
+        estado = request.POST.get('estado', '').strip().upper()
+
+        if not all([cep, rua, numero, bairro, cidade, estado]):
+            messages.error(request, 'Preencha todos os campos obrigatórios do endereço.')
+            return render(request, 'produtos/checkout_endereco.html', {
+                'carrinho': carrinho,
+                'endereco': endereco_salvo,
+            })
+
+        endereco_dados = {
+            'cep': cep, 'rua': rua, 'numero': numero, 'complemento': complemento,
+            'bairro': bairro, 'cidade': cidade, 'estado': estado,
+        }
+
+        Endereco.objects.update_or_create(
+            usuario=request.user,
+            defaults=endereco_dados,
+        )
+
+        try:
+            pedido = _criar_pedido_a_partir_do_carrinho(request, carrinho, endereco_dados)
+            messages.success(request, f'Compra finalizada! Pedido #{pedido.pk}.')
+            return redirect('meu_pedido', pk=pedido.pk)
+        except ValidationError as e:
+            messages.error(request, str(e))
+            return redirect('ver_carrinho_cliente')
+
+    return render(request, 'produtos/checkout_endereco.html', {
+        'carrinho': carrinho,
+        'endereco': endereco_salvo,
+    })
 
 
 @login_required
 def meu_pedido_detalhe(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk, cliente=request.user)
-    return render(request, 'painel/produtos/meu_pedido_detalhe.html', {'pedido': pedido})
+    return render(request, 'produtos/pedidos.html', {'pedido': pedido})

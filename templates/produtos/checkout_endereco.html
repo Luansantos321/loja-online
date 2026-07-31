@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Confirmar Endereço{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Endereço de Entrega</h2>
+    <p class="text-muted">Confirme ou atualize o endereço para esta compra.</p>
+
+    <div class="row">
+        <div class="col-md-7">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">CEP</label>
+                        <input type="text" name="cep" class="form-control" value="{{ endereco.cep|default:'' }}" required>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Rua</label>
+                        <input type="text" name="rua" class="form-control" value="{{ endereco.rua|default:'' }}" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Número</label>
+                        <input type="text" name="numero" class="form-control" value="{{ endereco.numero|default:'' }}" required>
+                    </div>
+                    <div class="col-md-9 mb-3">
+                        <label class="form-label">Complemento</label>
+                        <input type="text" name="complemento" class="form-control" value="{{ endereco.complemento|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Bairro</label>
+                    <input type="text" name="bairro" class="form-control" value="{{ endereco.bairro|default:'' }}" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Cidade</label>
+                        <input type="text" name="cidade" class="form-control" value="{{ endereco.cidade|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Estado</label>
+                        <input type="text" name="estado" class="form-control" maxlength="2" placeholder="UF" value="{{ endereco.estado|default:'' }}" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Confirmar e Finalizar Compra</button>
+                <a href="{% url 'ver_carrinho_cliente' %}" class="btn btn-secondary">Voltar ao carrinho</a>
+            </form>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Resumo do pedido</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for item in carrinho %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ item.quantidade }}x {{ item.variacao }}</span>
+                            <span>R$ {{ item.subtotal|floatformat:2 }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="fw-bold mt-3 mb-0">Total: R$ {{ carrinho.total|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

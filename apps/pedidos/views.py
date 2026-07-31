@@ -6,8 +6,9 @@ from django.db import transaction
 from apps.produtos.models import VariacaoProduto
 from apps.produtos.services import registrar_saida
 from .cart import Carrinho
-from .models import Pedido, ItemPedido
+from .models import Pedido, ItemPedido 
 from apps.contas.models import Usuario
+
 
 
 def eh_funcionario(user):
@@ -91,7 +92,7 @@ def pedido_confirmado(request, pk):
 
 @user_passes_test(eh_funcionario, login_url='login')
 def pedido_list(request):
-    pedidos = Pedido.objects.select_related('atendente').prefetch_related('itens__variacao').all()
+    pedidos = Pedido.objects.select_related('atendente', 'cliente').prefetch_related('itens__variacao').all()
 
     status = request.GET.get('status')
     if status:
@@ -103,10 +104,11 @@ def pedido_list(request):
         'status_choices': Pedido.STATUS_CHOICES,
     })
 
-@login_required
-def comprar_agora(request, variacao_id):
-    if request.method == 'POST':
-        quantidade = int(request.POST.get('quantidade', 1))
-        carrinho = Carrinho(request)
-        carrinho.adicionar(variacao_id, quantidade)
-        return redirect('finalizar_compra_cliente')
+
+@user_passes_test(eh_funcionario, login_url='login')
+def pedido_confirmado(request, pk):
+    pedido = get_object_or_404(
+        Pedido.objects.select_related('cliente', 'atendente').prefetch_related('itens__variacao'),
+        pk=pk
+    )
+    return render(request, 'painel/pedidos/pedido_confirmado.html', {'pedido': pedido})

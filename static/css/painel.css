@@ -1,0 +1,46 @@
+:root {
+    --painel-bg-primary: #1e293b;
+    --painel-content-bg: #f8fafc;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--painel-content-bg);
+}
+
+.painel-navbar {
+    background: var(--painel-bg-primary);
+}
+
+.painel-navbar .nav-link.active {
+    font-weight: 600;
+    color: #fff !important;
+    border-bottom: 2px solid #2563eb;
+}
+
+.painel-navbar .dropdown-menu {
+    background: var(--painel-bg-primary);
+    border: none;
+}
+
+.painel-navbar .dropdown-item {
+    color: #e2e8f0;
+}
+
+.painel-navbar .dropdown-item:hover {
+    background: #334155;
+    color: #fff;
+}
+
+.painel-main {
+    padding: 2rem 0;
+}
+
+.card, .table {
+    border-radius: 10px;
+}
+
+.table thead {
+    background: #f1f5f9;
+}
