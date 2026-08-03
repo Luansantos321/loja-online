@@ -21,7 +21,8 @@
             class="form-control"
             name="q"
             value="{{ busca }}"
-            placeholder="Pesquisar marca..."
+            placeholder="Buscar por nome da marca..."
+            value="{{ request.GET.busca|default:'' }}"
         >
 
     </form>
